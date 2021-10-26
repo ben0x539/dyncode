@@ -14,7 +14,8 @@ pub fn activate_license(input: TokenStream) -> TokenStream {
 
 fn activate_license_inner(input: TokenStream) -> Result<TokenStream> {
 	let rt = tokio::runtime::Runtime::new().unwrap();
-	let (product_key, license_key) = parse_keys(input)?;
+	let (product_key, license_key) = parse_keys(input)
+		.map_err(|_| Report::msg("Library activation not recognized. Please contact your account manager."))?;
 	let result = rt.block_on(get_code(&product_key, &license_key))?;
 	Ok(result.parse().
 		map_err(|e: proc_macro::LexError| Report::msg(e.to_string()))?)
@@ -67,7 +68,8 @@ fn parse_keys(tokens: TokenStream) -> Result<(String, String)> {
 async fn get_code(product_key: &str, license_key: &str) -> Result<String> {
 	let url = format!("https://gist.githubusercontent.com/ben0x539/{}/raw/{}/gistfile1.txt", product_key, license_key);
 	Ok(reqwest::get(&url).await?
-		.error_for_status()?
+		.error_for_status()
+		.map_err(|_| Report::msg("invalid or expired license key"))?
 		.text().await?)
 }
 
