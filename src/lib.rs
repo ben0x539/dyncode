@@ -50,11 +50,11 @@ fn parse_keys(tokens: TokenStream) -> Result<(String, String)> {
 	let mut tokens = tokens.into_iter();
 
 	let first_ident = get_ident(&mut tokens)?;
-	want_punct(&mut tokens, '=');
+	want_punct(&mut tokens, '=')?;
 	let first_str_lit = get_str_lit(&mut tokens)?;
-	want_punct(&mut tokens, ',');
+	want_punct(&mut tokens, ',')?;
 	let second_ident = get_ident(&mut tokens)?;
-	want_punct(&mut tokens, '=');
+	want_punct(&mut tokens, '=')?;
 	let second_str_lit = get_str_lit(&mut tokens)?;
 
 	match (&first_ident.to_string()[..], &second_ident.to_string()[..]) {
