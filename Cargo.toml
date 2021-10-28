@@ -14,3 +14,4 @@ color-eyre = "0.5.11"
 tokio = { version = "1.12.0", features = ["full"] }
 syn = "1.0.81"
 proc-macro2 = "1.0.32"
+quote = "1.0.10"

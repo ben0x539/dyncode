@@ -3,6 +3,7 @@ use proc_macro::{TokenStream};
 use proc_macro2::{Span, Ident};
 use syn::{parse_macro_input, Token, Result as SynResult, LitStr, Error};
 use syn::parse::{Parse, ParseStream};
+use quote::quote;
 
 use color_eyre::eyre::{Result, Report};
 
@@ -48,7 +49,10 @@ pub fn activate_license(input: TokenStream) -> TokenStream {
 	let input = parse_macro_input!(input);
 	match activate_license_inner(input) {
 		Ok(tokens) => tokens,
-		Err(e) => panic!("{}", e.to_string()),
+		Err(e) => {
+			let msg = e.to_string();
+			quote! { compile_error!(#msg); }.into()
+		}
 	}
 }
 
